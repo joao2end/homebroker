@@ -4,11 +4,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { Wallet } from './entities/wallet.entity';
+import { CreateWalletAssetDto } from './dto/create-wallet-asset.dto';
+import { WalletAsset } from './entities/wallet-asset.entity';
 
 @Injectable()
 export class WalletsService {
 
-  constructor(@InjectModel(Wallet.name) private Walletschema: Model<Wallet>) {}
+  constructor(
+    @InjectModel(Wallet.name) private Walletschema: Model<Wallet>,
+    @InjectModel('WalletAsset') private WalletAsset: Model<WalletAsset>,
+  ) {}
 
   create(createWalletDto: CreateWalletDto) {
     return this.Walletschema.create(createWalletDto);
@@ -28,5 +33,9 @@ export class WalletsService {
 
   remove(_id: string) {
     return this.Walletschema.findOneAndDelete({ _id });
+  }
+
+  createWalletAsset(createWalletAssetDto: CreateWalletAssetDto) {
+    return this.WalletAsset.create(createWalletAssetDto);
   }
 }

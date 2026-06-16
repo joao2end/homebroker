@@ -1,18 +1,36 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import crypto from "crypto";
 import mongoose, { HydratedDocument } from "mongoose";
-import { Wallet, WalletDocument } from "./wallet.entity";
 import { Asset, AssetDocument } from "src/assets/entities/asset.entity";
+import { Wallet, WalletDocument } from "src/wallets/entities/wallet.entity";
 
-export type WalletAssetDocument = HydratedDocument<WalletAsset>;
+export type OrderDocument = HydratedDocument<Order>;
+
+export enum OrderType {
+    BUY = 'BUY',
+    SELL = 'SELL'
+}
+
+export enum OrderStatus {
+    PENDING = 'PENDING',
+    OPEN = 'OPEN',
+    CLOSED = 'CLOSED',
+    FAILED = 'FAILED'
+}
 
 @Schema( { timestamps: true } )
-export class WalletAsset {
+export class Order {
     @Prop({ default: ()=> crypto.randomUUID() })
     _id: string;
 
     @Prop(type => mongoose.Schema.Types.Int32 )
     shares: number;
+
+    @Prop(type => mongoose.Schema.Types.Int32 )
+    partial: number;
+
+    @Prop()
+    price: number;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Wallet.name })
     wallet: WalletDocument | string;
@@ -20,8 +38,14 @@ export class WalletAsset {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Asset.name })
     asset: AssetDocument | string;
 
+    @Prop({ enum: OrderType })
+    type: string;
+
+    @Prop({ enum: OrderStatus })
+    status: string;
+
     createdAt!: Date;
     updatedAt!: Date;
 }
 
-export const WalletAssetSchema = SchemaFactory.createForClass(WalletAsset);
+export const OrderSchema = SchemaFactory.createForClass(Order);
