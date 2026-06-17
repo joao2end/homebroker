@@ -14,10 +14,10 @@ export class WalletAsset {
     @Prop(type => mongoose.Schema.Types.Int32 )
     shares: number;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Wallet.name })
+    @Prop({ type: String, ref: 'Wallet' })
     wallet: WalletDocument | string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Asset.name })
+    @Prop({ type: String, ref: 'Asset' })
     asset: AssetDocument | string;
 
     createdAt!: Date;

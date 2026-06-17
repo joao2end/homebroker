@@ -17,9 +17,6 @@ export class Asset {
 
     @Prop()
     price: number;
-    
-    @Prop()
-    imagem: string;
 
     createdAt!: Date;
     updatedAt!: Date;

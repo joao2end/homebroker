@@ -7,7 +7,6 @@ Content-Type: application/json
     "name": "Itau",
     "symbol": "ITAU3",
     "price": 100,
-    "imagem": "ITAU.png"
 }
 
 ###
@@ -46,3 +45,29 @@ Content-Type: application/json
     "assetId": "{{ assetId }}",
     "shares": 10
 }
+
+### Create Order
+# @name createOrder
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+    "walletId": "{{ walletId }}",
+    "assetId": "{{ assetId }}",
+    "shares": 5,
+    "type": "BUY"
+}
+
+###
+
+@orderId = {{ createOrder.response.body._id }}
+
+### Get All Orders
+GET http://localhost:3000/orders
+
+
+#### Get Order by ID
+GET http://localhost:3000/orders/{{ orderId }}
+
+### Get All With Filters
+GET http://localhost:3000/orders?status=PENDING
