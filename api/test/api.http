@@ -4,13 +4,14 @@ POST http://localhost:3000/assets
 Content-Type: application/json
 
 {
-    "name": "Itau",
-    "symbol": "ITAU3",
-    "price": 100,
+    "name": "Itausa",
+    "symbol": "ITSA5",
+    "price": 20
 }
 
 ###
 
+@assetSymbo = {{ createAsset.response.body.symbol }}
 @assetId = {{ createAsset.response.body._id }}
 
 ### Get All Assets
@@ -42,8 +43,9 @@ POST http://localhost:3000/wallets/{{ walletId }}/assets
 Content-Type: application/json
 
 {
-    "assetId": "{{ assetId }}",
-    "shares": 10
+    "wallet": "{{ walletId }}",
+    "asset": "{{ assetId }}",
+    "shares": 4421
 }
 
 ### Create Order

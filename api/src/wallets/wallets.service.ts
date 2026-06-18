@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { Wallet } from './entities/wallet.entity';
@@ -12,7 +12,8 @@ export class WalletsService {
 
   constructor(
     @InjectModel(Wallet.name) private Walletschema: Model<Wallet>,
-    @InjectModel('WalletAsset') private WalletAsset: Model<WalletAsset>,
+    @InjectModel(WalletAsset.name) private WalletAssetSchema: Model<WalletAsset>,
+    @InjectConnection() private connection: Connection,
   ) {}
 
   create(createWalletDto: CreateWalletDto) {
@@ -24,7 +25,12 @@ export class WalletsService {
   }
 
   findOne(_id: string) {
-    return this.Walletschema.findOne({ _id }).populate(['assets']);
+    return this.Walletschema.findById({ _id }).populate([
+      { 
+        path: 'assets',
+        populate: ['asset']
+      }
+    ]);
   }
 
   update(_id: string, updateWalletDto: UpdateWalletDto) {
@@ -35,7 +41,25 @@ export class WalletsService {
     return this.Walletschema.findOneAndDelete({ _id });
   }
 
-  createWalletAsset(createWalletAssetDto: CreateWalletAssetDto) {
-    return this.WalletAsset.create(createWalletAssetDto);
+  async createWalletAsset(createWalletAssetDto: CreateWalletAssetDto) {
+    const session = await this.connection.startSession();
+
+    try {
+      return await session.withTransaction(async () => {
+        const doc = await this.WalletAssetSchema.create([createWalletAssetDto], { session });
+        const walletAsset = doc[0];
+        await this.Walletschema.updateOne(
+          { _id: createWalletAssetDto.wallet },
+          { $push: { assets: walletAsset._id } },
+          { session }
+        ).exec();
+        return walletAsset;
+      });
+    } catch (error) {
+      throw error;
+    } finally {
+      await session.endSession();
+    }
   }
+
 }

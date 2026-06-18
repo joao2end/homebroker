@@ -16,6 +16,7 @@ export class Wallet {
         set: (v) => [...new Set(v)],
     })
     assets!: WalletAssetDocument[] | string[];
+    
     createdAt!: Date;
     updatedAt!: Date;
 }

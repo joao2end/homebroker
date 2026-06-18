@@ -34,7 +34,7 @@ export class WalletsController {
   }
 
   @Post(':id/assets')
-  createWalletAsset(@Param('id') id: string, @Body() createWalletAssetDto: Omit<CreateWalletAssetDto, 'walletId'>) {
-    return this.walletsService.createWalletAsset({ ...createWalletAssetDto, walletId: id });
+  createWalletAsset(@Param('id') id: string, @Body() createWalletAssetDto: Omit<CreateWalletAssetDto, 'wallet'>) {
+    return this.walletsService.createWalletAsset({ ...createWalletAssetDto, wallet: id });
   }
 }
